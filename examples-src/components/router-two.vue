@@ -1,45 +1,66 @@
 <template>
-  <div class="router2">
-    <div class="flex wd800">
-      <div class="options" style="color:#357edd;">
-        <p>
-          <b>demo4</b> 向下滚动,禁止了hover悬停
-        </p>var option = {
-        <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;limitMoveNum: 5,
-        <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;direction: 0,
-        <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hoverStop: false,
-        <br />}
-      </div>
-      <my-class :data="listData3" :class-option="classOption3" class="warp">
-        <ul class="item">
-          <li v-for="(item, index) in listData3" :key="index">
-            <span class="title" v-text="item.title"></span>
-            <span class="date" v-text="item.date"></span>
-          </li>
-        </ul>
-      </my-class>
+    <div class="router2">
+        <div class="flex wd800">
+            <div class="options" style="color:#357edd;">
+                <p>
+                    <b>demo4</b> 向下滚动,禁止了hover悬停
+                </p>var option = {
+                <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;limitMoveNum: 5,
+                <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;direction: 0,
+                <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hoverStop: false,
+                <br/>}
+            </div>
+            <my-class :data="listData3" :class-option="classOption3" class="warp">
+                <ul class="item">
+                    <li v-for="(item, index) in listData3" :key="index">
+                        <span class="title" v-text="item.title"></span>
+                        <span class="date" v-text="item.date"></span>
+                    </li>
+                </ul>
+            </my-class>
+        </div>
+        <div class="flex wd800">
+            <div class="options" style="color:#357edd;">
+                <p>
+                    <b>demo5</b> 向上无缝滚动,单条停止一段时间
+                </p>var option = {
+                <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;step: 1,
+                <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;limitMoveNum: 5
+                <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;singleHeight: 30,
+                <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;waitTime: 1000
+                <br/>}
+            </div>
+            <my-class :data="listData4" :class-option="classOption4" class="warp">
+                <ul class="item">
+                    <li v-for="(item, index) in listData4" :key="index">
+                        <span class="title" v-text="item.title"></span>
+                        <span class="date" v-text="item.date"></span>
+                    </li>
+                </ul>
+            </my-class>
+        </div>
+
+        <div class="flex wd800">
+            <div class="options" style="color:#357edd;">
+                <p>
+                    <b>demo6</b> 向上无缝滚动,鼠标滚动监听
+                </p>var option = {
+                <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;step: 0.5,
+                <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;limitMoveNum: 5
+                <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;singleHeight: 30,
+                <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;waitTime: 1000
+                <br/>}
+            </div>
+            <my-class :data="listData4" :class-option="classOption5" class="warp">
+                <ul class="item">
+                    <li v-for="(item, index) in listData4" :key="index">
+                        <span class="title" v-text="item.title"></span>
+                        <span class="date" v-text="item.date"></span>
+                    </li>
+                </ul>
+            </my-class>
+        </div>
     </div>
-    <div class="flex wd800">
-      <div class="options" style="color:#357edd;">
-        <p>
-          <b>demo5</b> 向上无缝滚动,单条停止一段时间
-        </p>var option = {
-        <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;step: 1,
-        <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;limitMoveNum: 5
-        <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;singleHeight: 30,
-        <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;waitTime: 1000
-        <br />}
-      </div>
-      <my-class :data="listData4" :class-option="classOption4" class="warp">
-        <ul class="item">
-          <li v-for="(item, index) in listData4" :key="index">
-            <span class="title" v-text="item.title"></span>
-            <span class="date" v-text="item.date"></span>
-          </li>
-        </ul>
-      </my-class>
-    </div>
-  </div>
 </template>
 <style lang="scss" scoped>
 </style>
@@ -47,7 +68,7 @@
   import myClass from 'src/components/myClass.vue'
 
   export default {
-    data () {
+    data() {
       return {
         listData3: [{
           'title': '无缝滚动第一行无缝滚动第一行',
@@ -105,19 +126,25 @@
       }
     },
     computed: {
-      classOption3 () {
+      classOption3() {
         return {
           limitMoveNum: 5,
           direction: 0,
           hoverStop: false
         }
       },
-      classOption4 () {
+      classOption4() {
         return {
           step: 1,
           limitMoveNum: 5,
           singleHeight: 30,
           waitTime: 1000,
+        }
+      },
+      classOption5() {
+        return {
+          limitMoveNum: 5,
+          enableScroll: true
         }
       }
     },

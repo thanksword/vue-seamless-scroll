@@ -1,26 +1,26 @@
 <template>
-  <div ref="wrap">
-    <div :style="leftSwitch" v-if="navigation" :class="leftSwitchClass" @click="leftSwitchClick">
-      <slot name="left-switch"></slot>
+    <div ref="wrap" @wheel="wheel">
+        <div :style="leftSwitch" v-if="navigation" :class="leftSwitchClass" @click="leftSwitchClick">
+            <slot name="left-switch"></slot>
+        </div>
+        <div :style="rightSwitch" v-if="navigation" :class="rightSwitchClass" @click="rightSwitchClick">
+            <slot name="right-switch"></slot>
+        </div>
+        <div
+                ref="realBox"
+                :style="pos"
+                @mouseenter="enter"
+                @mouseleave="leave"
+                @touchstart="touchStart"
+                @touchmove="touchMove"
+                @touchend="touchEnd"
+        >
+            <div ref="slotList" :style="float">
+                <slot></slot>
+            </div>
+            <div v-html="copyHtml" :style="float"></div>
+        </div>
     </div>
-    <div :style="rightSwitch" v-if="navigation" :class="rightSwitchClass" @click="rightSwitchClick">
-      <slot name="right-switch"></slot>
-    </div>
-    <div
-      ref="realBox"
-      :style="pos"
-      @mouseenter="enter"
-      @mouseleave="leave"
-      @touchstart="touchStart"
-      @touchmove="touchMove"
-      @touchend="touchEnd"
-    >
-      <div ref="slotList" :style="float">
-        <slot></slot>
-      </div>
-      <div v-html="copyHtml" :style="float"></div>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -29,7 +29,7 @@
   const copyObj = require('comutils/copyObj')
   export default {
     name: 'vue-seamless-scroll',
-    data () {
+    data() {
       return {
         xPos: 0,
         yPos: 0,
@@ -55,43 +55,43 @@
       }
     },
     computed: {
-      leftSwitchState () {
+      leftSwitchState() {
         return this.xPos < 0
       },
-      rightSwitchState () {
+      rightSwitchState() {
         return Math.abs(this.xPos) < (this.realBoxWidth - this.width)
       },
-      leftSwitchClass () {
+      leftSwitchClass() {
         return this.leftSwitchState ? '' : this.options.switchDisabledClass
       },
-      rightSwitchClass () {
+      rightSwitchClass() {
         return this.rightSwitchState ? '' : this.options.switchDisabledClass
       },
-      leftSwitch () {
+      leftSwitch() {
         return {
           position: 'absolute',
           margin: `${this.height / 2}px 0 0 -${this.options.switchOffset}px`,
           transform: 'translate(-100%,-50%)'
         }
       },
-      rightSwitch () {
+      rightSwitch() {
         return {
           position: 'absolute',
           margin: `${this.height / 2}px 0 0 ${this.width + this.options.switchOffset}px`,
           transform: 'translateY(-50%)'
         }
       },
-      float () {
-        return this.isHorizontal ? { float: 'left', overflow: 'hidden' } : { overflow: 'hidden' }
+      float() {
+        return this.isHorizontal ? {float: 'left', overflow: 'hidden'} : {overflow: 'hidden'}
       },
-      pos () {
+      pos() {
         return {
           transform: `translate(${this.xPos}px,${this.yPos}px)`,
           transition: `all ${this.ease} ${this.delay}ms`,
           overflow: 'hidden'
         }
       },
-      defaultOption () {
+      defaultOption() {
         return {
           step: 1, //步长
           limitMoveNum: 5, //启动无缝滚动最小数据数
@@ -107,41 +107,45 @@
           switchSingleStep: 134,
           switchDelay: 400,
           switchDisabledClass: 'disabled',
-          isSingleRemUnit: false // singleWidth/singleHeight 是否开启rem度量
+          isSingleRemUnit: false, // singleWidth/singleHeight 是否开启rem度量,
+          enableScroll: false // 是否允许鼠标滚动
         }
       },
-      options () {
+      options() {
         return copyObj({}, this.defaultOption, this.classOption)
       },
-      navigation () {
+      navigation() {
         return this.options.navigation
       },
-      autoPlay () {
+      autoPlay() {
         if (this.navigation) return false
         return this.options.autoPlay
       },
-      scrollSwitch () {
+      scrollSwitch() {
         return this.data.length >= this.options.limitMoveNum
       },
-      hoverStopSwitch () {
+      hoverStopSwitch() {
         return this.options.hoverStop && this.autoPlay && this.scrollSwitch
       },
-      canTouchScroll () {
+      canTouchScroll() {
         return this.options.openTouch
       },
-      isHorizontal () {
+      canWheelScroll() {
+        return this.options.enableScroll
+      },
+      isHorizontal() {
         return this.options.direction > 1
       },
-      baseFontSize () {
+      baseFontSize() {
         return this.options.isSingleRemUnit ? parseInt(window.getComputedStyle(document.documentElement, null).fontSize) : 1
       },
-      realSingleStopWidth () {
+      realSingleStopWidth() {
         return this.options.singleWidth * this.baseFontSize
       },
-      realSingleStopHeight () {
+      realSingleStopHeight() {
         return this.options.singleHeight * this.baseFontSize
       },
-      step () {
+      step() {
         let singleStep
         let step = this.options.step
         if (this.isHorizontal) {
@@ -153,10 +157,10 @@
           console.error('如果设置了单步滚动,step需是单步大小的约数,否则无法保证单步滚动结束的位置是否准确。~~~~~')
         }
         return step
-      }
+      },
     },
     methods: {
-      leftSwitchClick () {
+      leftSwitchClick() {
         if (!this.leftSwitchState) return
         // 小于单步距离
         if (Math.abs(this.xPos) < this.options.switchSingleStep) {
@@ -165,7 +169,7 @@
         }
         this.xPos += this.options.switchSingleStep
       },
-      rightSwitchClick () {
+      rightSwitchClick() {
         if (!this.rightSwitchState) return
         // 小于单步距离
         if ((this.realBoxWidth - this.width + this.xPos) < this.options.switchSingleStep) {
@@ -174,14 +178,28 @@
         }
         this.xPos -= this.options.switchSingleStep
       },
-      _cancle () {
+      _cancle() {
         cancelAnimationFrame(this.reqFrame || '')
       },
-      touchStart (e) {
+
+      //鼠标滚轮事件
+      wheel(e) {
+        // 拦截滚动
+        if (!this.canWheelScroll) return;
+        const {direction} = this.options;
+        if (direction !== 1) return; // 只拦截向上的
+        e.preventDefault();
+        const {deltaY} = e;
+        this.yPos += deltaY;
+        if (this.yPos > 0) this.yPos = 0;
+        let h = this.realBoxHeight / 2 * -1
+        if (this.yPos < h) this.yPos = 0;
+      },
+      touchStart(e) {
         if (!this.canTouchScroll) return
         let timer
         const touch = e.targetTouches[0] //touches数组对象获得屏幕上所有的touch，取第一个touch
-        const { waitTime, singleHeight, singleWidth } = this.options
+        const {waitTime, singleHeight, singleWidth} = this.options
         this.startPos = {
           x: touch.pageX,
           y: touch.pageY
@@ -197,11 +215,11 @@
           this._cancle()
         }
       },
-      touchMove (e) {
+      touchMove(e) {
         //当屏幕有多个touch或者页面被缩放过，就不执行move操作
         if (!this.canTouchScroll || e.targetTouches.length > 1 || e.scale && e.scale !== 1) return
         const touch = e.targetTouches[0]
-        const { direction } = this.options
+        const {direction} = this.options
         this.endPos = {
           x: touch.pageX - this.startPos.x,
           y: touch.pageY - this.startPos.y
@@ -214,7 +232,7 @@
           this.xPos = this.startPosX + this.endPos.x
         }
       },
-      touchEnd () {
+      touchEnd() {
         if (!this.canTouchScroll) return
         let timer
         const direction = this.options.direction
@@ -236,13 +254,13 @@
           this._move()
         }, this.delay)
       },
-      enter () {
+      enter() {
         if (this.hoverStopSwitch) this._stopMove()
       },
-      leave () {
+      leave() {
         if (this.hoverStopSwitch) this._startMove()
       },
-      _move () {
+      _move() {
         // 鼠标移入时拦截_move()
         if (this.isHover) return
         this._cancle() //进入move立即先清除动画 防止频繁touchMove导致多动画同时进行
@@ -250,8 +268,8 @@
           function () {
             const h = this.realBoxHeight / 2  //实际高度
             const w = this.realBoxWidth / 2 //宽度
-            let { direction, waitTime } = this.options
-            let { step } = this
+            let {direction, waitTime} = this.options
+            let {step} = this
             if (direction === 1) { // 上
               if (Math.abs(this.yPos) >= h) {
                 this.$emit('ScrollEnd')
@@ -300,10 +318,10 @@
           }.bind(this)
         )
       },
-      _initMove () {
+      _initMove() {
         this.$nextTick(() => {
-          const { switchDelay } = this.options
-          const { autoPlay, isHorizontal } = this
+          const {switchDelay} = this.options
+          const {autoPlay, isHorizontal} = this
           this._dataWarm(this.data)
           this.copyHtml = '' //清空copy
           if (isHorizontal) {
@@ -343,27 +361,27 @@
           }
         })
       },
-      _dataWarm (data) {
+      _dataWarm(data) {
         if (data.length > 100) {
           console.warn(`数据达到了${data.length}条有点多哦~,可能会造成部分老旧浏览器卡顿。`);
         }
       },
-      _startMove () {
+      _startMove() {
         this.isHover = false //开启_move
         this._move()
       },
-      _stopMove () {
+      _stopMove() {
         this.isHover = true //关闭_move
         // 防止频频hover进出单步滚动,导致定时器乱掉
         if (this.singleWaitTime) clearTimeout(this.singleWaitTime)
         this._cancle()
       }
     },
-    mounted () {
+    mounted() {
       this._initMove()
     },
     watch: {
-      data (newData, oldData) {
+      data(newData, oldData) {
         this._dataWarm(newData)
         //监听data是否有变更
         if (!arrayEqual(newData, oldData)) {
@@ -371,7 +389,7 @@
           this._initMove()
         }
       },
-      autoPlay (bol) {
+      autoPlay(bol) {
         if (bol) {
           this._cancle()
           this._initMove()
@@ -380,13 +398,13 @@
         }
       }
     },
-    beforeCreate () {
+    beforeCreate() {
       this.reqFrame = null // move动画的animationFrame定时器
       this.singleWaitTime = null // single 单步滚动的定时器
       this.isHover = false // mouseenter mouseleave 控制this._move()的开关
       this.ease = 'ease-in'
     },
-    beforeDestroy () {
+    beforeDestroy() {
       this._cancle()
       clearTimeout(this.singleWaitTime)
     }
